@@ -1,60 +1,22 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>פרויקט הוספת מרפסות - צמרות דגן</title>
   <style>
-    @font-face {
-      font-family: 'DejaVu Sans';
-      src: url('https://fonts.googleapis.com/css2?family=DejaVu+Sans&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;700&display=swap');
+    html {
+      scroll-behavior: smooth;
     }
     body {
-      fonturion: fixed;
-      font-family: 'DejaVu Sans', sans-serif;
-      background: linear-gradient(135deg, #1e3a8a 0%, #e5e7eb 100%);
+      font-family: 'Noto Sans Hebrew', sans-serif;
+      background: linear-gradient(135deg, #1e40af 0%, #f1f5f9 100%);
       background-attachment: fixed;
+      margin: 0;
+      color: #1f2937;
     }
-    /* Tailwind CSS pre-built output */
+    /* Tailwind CSS pre-built output with mobile optimizations */
     .bg-gray-100 { background-color: #f3f4f6; }
     .text-gray-800 { color: #1f2937; }
     .bg-blue-600 { background-color: #2563eb; }
@@ -67,7 +29,7 @@
     .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
     .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
     .px-4 { padding-left: 1rem; padding-right: 1rem; }
-    .max-w-5-Lg { max-width: 64rem; }
+    .max-w-5xl { max-width: 64rem; }
     .mx-auto { margin-left: auto; margin-right: auto; }
     .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
     .font-semibold { font-weight: 600; }
@@ -77,164 +39,412 @@
     .list-disc { list-style-type: disc; }
     .list-inside { list-style-position: inside; }
     .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
+    .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }
     .bg-gray-800 { background-color: #1f2937; }
     .mt-6 { margin-top: 1.5rem; }
     .w-full { width: 100%; }
     .max-w-lg { max-width: 32rem; }
     .rounded-lg { border-radius: 0.5rem; }
     .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+    .sticky { position: sticky; top: 0; }
+    .z-10 { z-index: 10; }
+    .bg-opacity-90 { background-opacity: 0.9; }
+    .transition { transition: all 0.3s ease; }
+    .fade-in { opacity: 0; animation: fadeIn 1s ease-in forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .rounded-full { border-radius: 9999px; }
+    .flex { display: flex; }
+    .justify-between { justify-content: space-between; }
+    .items-center { align-items: center; }
+    .hidden { display: none; }
+    .block { display: block; }
+    .flex-col { flex-direction: column; }
+    .gap-4 { gap: 1rem; }
+    .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+    .cursor-pointer { cursor: pointer; }
+    .min-h-12 { min-height: 3rem; }
+    .w-8 { width: 2rem; }
+    .h-8 { height: 2rem; }
+    @media (max-width: 640px) {
+      .text-4xl { font-size: 1.75rem; line-height: 2rem; }
+      .text-3xl { font-size: 1.25rem; line-height: 1.75rem; }
+      .text-lg { font-size: 0.875rem; line-height: 1.25rem; }
+      .max-w-lg { max-width: 100%; }
+      .py-12 { padding-top: 2rem; padding-bottom: 2rem; }
+      .px-4 { padding-left: 0.75rem; padding-right: 0.75rem; }
+      .text-2xl { font-size: 1.125rem; line-height: 1.5rem; }
+      .nav-menu { display: none; }
+      .nav-menu.active { display: flex; flex-direction: column; gap: 1rem; background-color: #2563eb; padding: 1rem; position: absolute; top: 4rem; right: 0; width: 100%; }
+      .hamburger { display: block; }
+    }
+    @media (min-width: 641px) {
+      .hamburger { display: none; }
+      .nav-menu { display: flex; }
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.25.6/babel.min.js"></script>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body>
   <div id="root"></div>
 
-  <script type="text/babel">
+  <script type="text/javascript">
+    "use strict";
+
+    function NavBar() {
+      const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+      const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+      };
+
+      return React.createElement(
+        "nav",
+        { className: "sticky top-0 z-10 bg-blue-600 bg-opacity-90 text-white py-4 px-4" },
+        React.createElement(
+          "div",
+          { className: "max-w-5xl mx-auto flex justify-between items-center" },
+          React.createElement(
+            "div",
+            { className: "text-2xl font-bold" },
+            "צמרות דגן"
+          ),
+          React.createElement(
+            "div",
+            { className: "hamburger cursor-pointer", onClick: toggleMenu },
+            React.createElement(
+              "svg",
+              { className: "w-8 h-8", fill: "none", stroke: "white", viewBox: "0 0 24 24" },
+              React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M4 6h16M4 12h16M4 18h16" })
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: `nav-menu flex gap-4 ${isMenuOpen ? 'active' : ''}` },
+            React.createElement(
+              "a",
+              { href: "#project-overview", className: "py-2 px-6 rounded-full transition min-h-12 flex items-center", onClick: toggleMenu },
+              "על הפרויקט"
+            ),
+            React.createElement(
+              "a",
+              { href: "#benefits", className: "py-2 px-6 rounded-full transition min-h-12 flex items-center", onClick: toggleMenu },
+              "יתרונות"
+            ),
+            React.createElement(
+              "a",
+              { href: "#costs", className: "py-2 px-6 rounded-full transition min-h-12 flex items-center", onClick: toggleMenu },
+              "עלויות"
+            ),
+            React.createElement(
+              "a",
+              { href: "#faq", className: "py-2 px-6 rounded-full transition min-h-12 flex items-center", onClick: toggleMenu },
+              "שאלות נפוצות"
+            ),
+            React.createElement(
+              "a",
+              { href: "#contact", className: "py-2 px-6 rounded-full transition min-h-12 flex items-center", onClick: toggleMenu },
+              "צרו קשר"
+            )
+          )
+        )
+      );
+    }
+
     function Header() {
-      return (
-        <header className="bg-blue-600 text-white py-6 text-center">
-          <h1 className="text-4xl font-bold">פרויקט הוספת מרפסות - צמרות דגן</h1>
-          <p className="mt-2 text-lg">שדרגו את איכות החיים שלכם עם מרפסות חדשות ומרווחות</p>
-        </header>
+      return React.createElement(
+        "header",
+        { className: "bg-blue-600 text-white py-6 text-center fade-in" },
+        React.createElement(
+          "h1",
+          { className: "text-4xl font-bold" },
+          "פרויקט הוספת מרפסות - צמרות דגן"
+        ),
+        React.createElement(
+          "p",
+          { className: "mt-2 text-lg" },
+          "שדרגו את איכות החיים שלכם עם מרפסות חדשות ומרווחות"
+        )
       );
     }
 
     function ProjectOverview() {
-      return (
-        <section className="py-12 px-4 max-w-5-Lg mx-auto">
-          <h2 className="text-3xl font-semibold mb-6">על הפרויקט</h2>
-          <p className="text-lg mb-4">
-            פרויקט הוספת והרחבת המרפסות במתחם צמרות דגן נועד לשפר את איכות החיים של הדיירים על ידי הוספת מרפסות מודרניות ומרווחות לכל דירה. הפרויקט מתוכנן בקפידה תוך הקפדה על תקני בנייה גבוהים, עיצוב אסתטי והתאמה לצרכי הדיירים.
-          </p>
-          <p className="text-lg mb-4">
-            אנו שמחים להציג בפניכם את התוכנית, הכוללת תוספת מרפסות בשטח של כ-12 מ"ר לכל דירה, עם אפשרויות עיצוב גמישות וחומרים איכותיים.
-          </p>
-          <img src="https://media.istockphoto.com/id/850823550/photo/white-balconies-in-modern-apartment-building.jpg?s=1024x1024&w=is&k=20&c=nWVWNpfO5q3I1FBfrJsxVsc1lAjdUoRN1_cZa0_Jcgc=" alt="מרפסות מודרניות" className="w-full max-w-lg mx-auto rounded-lg shadow-md mt-6" />
-        </section>
+      return React.createElement(
+        "section",
+        { id: "project-overview", className: "py-12 px-4 max-w-5xl mx-auto fade-in" },
+        React.createElement(
+          "h2",
+          { className: "text-3xl font-semibold mb-6" },
+          "על הפרויקט"
+        ),
+        React.createElement(
+          "p",
+          { className: "text-lg mb-4" },
+          "פרויקט הוספת והרחבת המרפסות במתחם צמרות דגן נועד לשפר את איכות החיים של הדיירים על ידי הוספת מרפסות מודרניות ומרווחות לכל דירה. הפרויקט מתוכנן בקפידה תוך הקפדה על תקני בנייה גבוהים, עיצוב אסתטי והתאמה לצרכי הדיירים."
+        ),
+        React.createElement(
+          "p",
+          { className: "text-lg mb-4" },
+          "אנו שמחים להציג בפניכם את התוכנית, הכוללת תוספת מרפסות בשטח של כ-12 מ\"ר לכל דירה, עם אפשרויות עיצוב גמישות וחומרים איכותיים."
+        ),
+        React.createElement("img", {
+          src: "https://media.istockphoto.com/id/850823550/photo/white-balconies-in-modern-apartment-building.jpg?s=1024x1024&w=is&k=20&c=nWVWNpfO5q3I1FBfrJsxVsc1lAjdUoRN1_cZa0_Jcgc=",
+          alt: "מרפסות מודרניות",
+          className: "w-full max-w-lg mx-auto rounded-lg shadow-md mt-6",
+          loading: "lazy"
+        })
       );
     }
 
     function Benefits() {
-      return (
-        <section className="bg-white py-12 px-4">
-          <div className="max-w-5-Lg mx-auto">
-            <h2 className="text-3xl font-semibold mb-6">יתרונות הפרויקט</h2>
-            <ul className="list-disc list-inside text-lg space-y-2">
-              <li>הגדלת שטח המגורים עם מרפסת פרטית לכל דירה</li>
-              <li>שיפור הנוף והאוורור הטבעי בבית</li>
-              <li>עליית ערך הנכס בשוק הנדל"ן</li>
-              <li>עיצוב מודרני המותאם לסגנון המתחם</li>
-              <li>תהליך בנייה מהיר עם מינימום הפרעה לדיירים</li>
-            </ul>
-            <img src="https://media.istockphoto.com/id/940884698/photo/new-apartment-building-with-a-modern-white-facade.jpg?s=1024x1024&w=is&k=20&c=rcAH42kP10hg3DubhB0onWJrEWIrLUrTSmMz-KqFSMg=" alt="חזית מודרנית" className="w-full max-w-lg mx-auto rounded-lg shadow-md mt-6" />
-          </div>
-        </section>
+      return React.createElement(
+        "section",
+        { id: "benefits", className: "bg-white py-12 px-4 fade-in" },
+        React.createElement(
+          "div",
+          { className: "max-w-5xl mx-auto" },
+          React.createElement(
+            "h2",
+            { className: "text-3xl font-semibold mb-6" },
+            "יתרונות הפרויקט"
+          ),
+          React.createElement(
+            "ul",
+            { className: "list-disc list-inside text-lg space-y-2" },
+            React.createElement("li", null, "הגדלת שטח המגורים עם מרפסת פרטית לכל דירה"),
+            React.createElement("li", null, "שיפור הנוף והאוורור הטבעי בבית"),
+            React.createElement("li", null, "עליית ערך הנכס בשוק הנדל\"ן"),
+            React.createElement("li", null, "עיצוב מודרני המותאם לסגנון המתחם"),
+            React.createElement("li", null, "תהליך בנייה מהיר עם מינימום הפרעה לדיירים")
+          ),
+          React.createElement("img", {
+            src: "https://media.istockphoto.com/id/940884698/photo/new-apartment-building-with-a-modern-white-facade.jpg?s=1024x1024&w=is&k=20&c=rcAH42kP10hg3DubhB0onWJrEWIrLUrTSmMz-KqFSMg=",
+            alt: "חזית מודרנית",
+            className: "w-full max-w-lg mx-auto rounded-lg shadow-md mt-6",
+            loading: "lazy"
+          })
+        )
       );
     }
 
     function Costs() {
-      return (
-        <section className="py-12 px-4 max-w-5-Lg mx-auto">
-          <h2 className="text-3xl font-semibold mb-6">עלויות הפרויקט</h2>
-          <p className="text-lg mb-4">
-            להלן הערכות ראשוניות לעלויות עבור הוספת המרפסות במתחם צמרות דגן:
-          </p>
-          <ul className="list-disc list-inside text-lg space-y-2">
-            <li>עלות בסיסית לדירה: כ-7,800 ש"ח (כולל תכנון ובנייה)</li>
-            <li>עלות משוערת נוספת עבור התאמות מיוחדות: כ-2,340 ש"ח</li>
-            <li>עלות משוערת עבור תוספות עיצוביות: כ-1,736 ש"ח</li>
-          </ul>
-          <p className="text-lg mt-4">
-            העלויות הסופיות עשויות להשתנות בהתאם לבחירות העיצוביות ולתנאי הפרויקט. לפרטים נוספים, אנא צרו קשר עם צוות הפרויקט.
-          </p>
-          <img src="https://media.istockphoto.com/id/879931070/photo/modern-apartment-buildings.jpg?s=1024x1024&w=is&k=20&c=ro1fh2hvJ4up97qHEpmZ4ic2SgeYOArw0NBdWJ65kXo=" alt="בנייני מגורים מודרניים" className="w-full max-w-lg mx-auto rounded-lg shadow-md mt-6" />
-        </section>
+      return React.createElement(
+        "section",
+        { id: "costs", className: "py-12 px-4 max-w-5xl mx-auto fade-in" },
+        React.createElement(
+          "h2",
+          { className: "text-3xl font-semibold mb-6" },
+          "עלויות הפרויקט"
+        ),
+        React.createElement(
+          "p",
+          { className: "text-lg mb-4" },
+          "להלן הערכות ראשוניות לעלויות עבור הוספת המרפסות במתחם צמרות דגן:"
+        ),
+        React.createElement(
+          "ul",
+          { className: "list-disc list-inside text-lg space-y-2" },
+          React.createElement("li", null, "עלות בסיסית לדירה: כ-7,800 ש\"ח (כולל תכנון ובנייה)"),
+          React.createElement("li", null, "עלות משוערת נוספת עבור התאמות מיוחדות: כ-2,340 ש\"ח"),
+          React.createElement("li", null, "עלות משוערת עבור תוספות עיצוביות: כ-1,736 ש\"ח")
+        ),
+        React.createElement(
+          "p",
+          { className: "text-lg mt-4" },
+          "העלויות הסופיות עשויות להשתנות בהתאם לבחירות העיצוביות ולתנאי הפרויקט. לפרטים נוספים, אנא צרו קשר עם צוות הפרויקט."
+        ),
+        React.createElement("img", {
+          src: "https://media.istockphoto.com/id/879931070/photo/modern-apartment-buildings.jpg?s=1024x1024&w=is&k=20&c=ro1fh2hvJ4up97qHEpmZ4ic2SgeYOArw0NBdWJ65kXo=",
+          alt: "בנייני מגורים מודרניים",
+          className: "w-full max-w-lg mx-auto rounded-lg shadow-md mt-6",
+          loading: "lazy"
+        })
       );
     }
 
     function FAQ() {
-      return (
-        <section className="bg-white py-12 px-4 max-w-5-Lg mx-auto">
-          <h2 className="text-3xl font-semibold mb-6">שאלות נפוצות</h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-semibold">מי משלמים?</h3>
-              <p className="text-lg">כל בעלי הדירות במתחם צמרות דגן ישתתפו בתשלום עבור הוספת המרפסות, בהתאם לחלקם בפרויקט.</p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">מי לא משלם?</h3>
-              <p className="text-lg">דיירים שוכרים (לא בעלי דירות) ובעלי דירות שבוחרים שלא להשתתף בפרויקט (במידה וניתן) לא ישלמו.</p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">כמה משלמים?</h3>
-              <p className="text-lg">העלות הבסיסית לדירה היא כ-7,800 ש"ח. עלויות נוספות עבור התאמות מיוחדות או תוספות עיצוביות נעות בין 1,736 ל-2,340 ש"ח, בהתאם לבחירות הדייר.</p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">על מה משלמים?</h3>
-              <p className="text-lg">התשלום מכסה את עלויות הבנייה, החומרים, ההיתרים, התכנון והעיצוב של המרפסות החדשות.</p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">מתי משלמים?</h3>
-              <p className="text-lg">התשלום יתבצע בשלבים: מקדמה עם חתימת ההסכם ויתרת התשלום עם סיום הבנייה, בהתאם ללוח הזמנים שייקבע.</p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">מה מקבלים?</h3>
-              <p className="text-lg">כל דייר יקבל מרפסת חדשה בשטח של כ-12 מ"ר, בעיצוב מודרני ובחומרים איכותיים, המותאמת לסגנון המתחם.</p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">למה עכשיו ולא קודם?</h3>
-              <p className="text-lg">הפרויקט יוצא לדרך כעת לאחר קבלת האישורים הרגולטוריים הדרושים, תכנון מפורט וזיהוי הצורך של הדיירים לשיפור איכות החיים.</p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">כמה זמן ייקח כל הסיפור?</h3>
-              <p className="text-lg">הפרויקט צפוי להימשך כ-6 עד 12 חודשים, תלוי בהיקף הבנייה ובלוח הזמנים הסופי.</p>
-            </div>
-          </div>
-        </section>
+      return React.createElement(
+        "section",
+        { id: "faq", className: "bg-white py-12 px-4 max-w-5xl mx-auto fade-in" },
+        React.createElement(
+          "h2",
+          { className: "text-3xl font-semibold mb-6" },
+          "שאלות נפוצות"
+        ),
+        React.createElement(
+          "div",
+          { className: "space-y-4" },
+          React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold" },
+              "מי משלמים?"
+            ),
+            React.createElement(
+              "p",
+              { className: "text-lg" },
+              "כל בעלי הדירות במתחם צמרות דגן ישתתפו בתשלום עבור הוספת המרפסות, בהתאם לחלקם בפרויקט."
+            )
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold" },
+              "מי לא משלם?"
+            ),
+            React.createElement(
+              "p",
+              { className: "text-lg" },
+              "דיירים שוכרים (לא בעלי דירות) ובעלי דירות שבוחרים שלא להשתתף בפרויקט (במידה וניתן) לא ישלמו."
+            )
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold" },
+              "כמה משלמים?"
+            ),
+            React.createElement(
+              "p",
+              { className: "text-lg" },
+              "העלות הבסיסית לדירה היא כ-7,800 ש\"ח. עלויות נוספות עבור התאמות מיוחדות או תוספות עיצוביות נעות בין 1,736 ל-2,340 ש\"ח, בהתאם לבחירות הדייר."
+            )
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold" },
+              "על מה משלמים?"
+            ),
+            React.createElement(
+              "p",
+              { className: "text-lg" },
+              "התשלום מכסה את עלויות הבנייה, החומרים, ההיתרים, התכנון והעיצוב של המרפסות החדשות."
+            )
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold" },
+              "מתי משלמים?"
+            ),
+            React.createElement(
+              "p",
+              { className: "text-lg" },
+              "התשלום יתבצע בשלבים: מקדמה עם חתימת ההסכם ויתרת התשלום עם סיום הבנייה, בהתאם ללוח הזמנים שייקבע."
+            )
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold" },
+              "מה מקבלים?"
+            ),
+            React.createElement(
+              "p",
+              { className: "text-lg" },
+              "כל דייר יקבל מרפסת חדשה בשטח של כ-12 מ\"ר, בעיצוב מודרני ובחומרים איכותיים, המותאמת לסגנון המתחם."
+            )
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold" },
+              "למה עכשיו ולא קודם?"
+            ),
+            React.createElement(
+              "p",
+              { className: "text-lg" },
+              "הפרויקט יוצא לדרך כעת לאחר קבלת האישורים הרגולטוריים הדרושים, תכנון מפורט וזיהוי הצורך של הדיירים לשיפור איכות החיים."
+            )
+          ),
+          React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold" },
+              "כמה זמן ייקח כל הסיפור?"
+            ),
+            React.createElement(
+              "p",
+              { className: "text-lg" },
+              "הפרויקט צפוי להימשך כ-6 עד 12 חודשים, תלוי בהיקף הבנייה ובלוח הזמנים הסופי."
+            )
+          )
+        )
       );
     }
 
     function Contact() {
-      return (
-        <section className="py-12 px-4 max-w-5-Lg mx-auto">
-          <h2 className="text-3xl font-semibold mb-6">צרו קשר</h2>
-          <p className="text-lg mb-4">
-            למידע נוסף על הפרויקט, לוחות זמנים, או לשאלות, אנא צרו קשר עם צוות הפרויקט:
-          </p>
-          <p className="text-lg">
-            <strong>דוא"ל:</strong> info@tsamarot-dagan.co.il<br />
-            <strong>טלפון:</strong> 03-123-4567<br />
-            <strong>כתובת:</strong> מתחם צמרות דגן, רחוב הדגן 123, תל אביב
-          </p>
-        </section>
+      return React.createElement(
+        "section",
+        { id: "contact", className: "py-12 px-4 max-w-5xl mx-auto fade-in" },
+        React.createElement(
+          "h2",
+          { className: "text-3xl font-semibold mb-6" },
+          "צרו קשר"
+        ),
+        React.createElement(
+          "p",
+          { className: "text-lg mb-4" },
+          "למידע נוסף על הפרויקט, לוחות זמנים, או לשאלות, אנא צרו קשר עם צוות הפרויקט:"
+        ),
+        React.createElement(
+          "p",
+          { className: "text-lg" },
+          React.createElement("strong", null, "דוא\"ל:"),
+          " info@tsamarot-dagan.co.il",
+          React.createElement("br"),
+          React.createElement("strong", null, "טלפון:"),
+          " 03-123-4567",
+          React.createElement("br"),
+          React.createElement("strong", null, "כתובת:"),
+          " מתחם צמרות דגן, רחוב הדגן 123, תל אביב"
+        )
       );
     }
 
     function Footer() {
-      return (
-        <footer className="bg-gray-800 text-white py-6 text-center">
-          <p>© 2025 צמרות דגן - כל הזכויות שמורות</p>
-        </footer>
+      return React.createElement(
+        "footer",
+        { className: "bg-gray-800 text-white py-6 text-center" },
+        React.createElement("p", null, "© 2025 צמרות דגן - כל הזכויות שמורות")
       );
     }
 
     function App() {
-      return (
-        <div>
-          <Header />
-          <ProjectOverview />
-          <Benefits />
-          <Costs />
-          <FAQ />
-          <Contact />
-          <Footer />
-        </div>
+      return React.createElement(
+        "div",
+        null,
+        React.createElement(NavBar),
+        React.createElement(Header),
+        React.createElement(ProjectOverview),
+        React.createElement(Benefits),
+        React.createElement(Costs),
+        React.createElement(FAQ),
+        React.createElement(Contact),
+        React.createElement(Footer)
       );
     }
 
-    ReactDOM.render(<App />, document.getElementById('root'));
+    ReactDOM.render(React.createElement(App), document.getElementById('root'));
   </script>
 </body>
 </html>
