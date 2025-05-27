@@ -1,4 +1,43 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -10,6 +49,7 @@
       src: url('https://fonts.googleapis.com/css2?family=DejaVu+Sans&display=swap');
     }
     body {
+      fonturion: fixed;
       font-family: 'DejaVu Sans', sans-serif;
       background: linear-gradient(135deg, #1e3a8a 0%, #e5e7eb 100%);
       background-attachment: fixed;
@@ -27,7 +67,7 @@
     .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
     .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
     .px-4 { padding-left: 1rem; padding-right: 1rem; }
-    .max-w-5xl { max-width: 64rem; }
+    .max-w-5-Lg { max-width: 64rem; }
     .mx-auto { margin-left: auto; margin-right: auto; }
     .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
     .font-semibold { font-weight: 600; }
@@ -39,7 +79,7 @@
     .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
     .bg-gray-800 { background-color: #1f2937; }
     .mt-6 { margin-top: 1.5rem; }
-    .w-ful { width: 100%; }
+    .w-full { width: 100%; }
     .max-w-lg { max-width: 32rem; }
     .rounded-lg { border-radius: 0.5rem; }
     .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
@@ -63,7 +103,7 @@
 
     function ProjectOverview() {
       return (
-        <section className="py-12 px-4 max-w-5xl mx-auto">
+        <section className="py-12 px-4 max-w-5-Lg mx-auto">
           <h2 className="text-3xl font-semibold mb-6">על הפרויקט</h2>
           <p className="text-lg mb-4">
             פרויקט הוספת והרחבת המרפסות במתחם צמרות דגן נועד לשפר את איכות החיים של הדיירים על ידי הוספת מרפסות מודרניות ומרווחות לכל דירה. הפרויקט מתוכנן בקפידה תוך הקפדה על תקני בנייה גבוהים, עיצוב אסתטי והתאמה לצרכי הדיירים.
@@ -79,7 +119,7 @@
     function Benefits() {
       return (
         <section className="bg-white py-12 px-4">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-5-Lg mx-auto">
             <h2 className="text-3xl font-semibold mb-6">יתרונות הפרויקט</h2>
             <ul className="list-disc list-inside text-lg space-y-2">
               <li>הגדלת שטח המגורים עם מרפסת פרטית לכל דירה</li>
@@ -96,7 +136,7 @@
 
     function Costs() {
       return (
-        <section className="py-12 px-4 max-w-5xl mx-auto">
+        <section className="py-12 px-4 max-w-5-Lg mx-auto">
           <h2 className="text-3xl font-semibold mb-6">עלויות הפרויקט</h2>
           <p className="text-lg mb-4">
             להלן הערכות ראשוניות לעלויות עבור הוספת המרפסות במתחם צמרות דגן:
@@ -114,9 +154,51 @@
       );
     }
 
+    function FAQ() {
+      return (
+        <section className="bg-white py-12 px-4 max-w-5-Lg mx-auto">
+          <h2 className="text-3xl font-semibold mb-6">שאלות נפוצות</h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold">מי משלמים?</h3>
+              <p className="text-lg">כל בעלי הדירות במתחם צמרות דגן ישתתפו בתשלום עבור הוספת המרפסות, בהתאם לחלקם בפרויקט.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">מי לא משלם?</h3>
+              <p className="text-lg">דיירים שוכרים (לא בעלי דירות) ובעלי דירות שבוחרים שלא להשתתף בפרויקט (במידה וניתן) לא ישלמו.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">כמה משלמים?</h3>
+              <p className="text-lg">העלות הבסיסית לדירה היא כ-7,800 ש"ח. עלויות נוספות עבור התאמות מיוחדות או תוספות עיצוביות נעות בין 1,736 ל-2,340 ש"ח, בהתאם לבחירות הדייר.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">על מה משלמים?</h3>
+              <p className="text-lg">התשלום מכסה את עלויות הבנייה, החומרים, ההיתרים, התכנון והעיצוב של המרפסות החדשות.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">מתי משלמים?</h3>
+              <p className="text-lg">התשלום יתבצע בשלבים: מקדמה עם חתימת ההסכם ויתרת התשלום עם סיום הבנייה, בהתאם ללוח הזמנים שייקבע.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">מה מקבלים?</h3>
+              <p className="text-lg">כל דייר יקבל מרפסת חדשה בשטח של כ-12 מ"ר, בעיצוב מודרני ובחומרים איכותיים, המותאמת לסגנון המתחם.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">למה עכשיו ולא קודם?</h3>
+              <p className="text-lg">הפרויקט יוצא לדרך כעת לאחר קבלת האישורים הרגולטוריים הדרושים, תכנון מפורט וזיהוי הצורך של הדיירים לשיפור איכות החיים.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">כמה זמן ייקח כל הסיפור?</h3>
+              <p className="text-lg">הפרויקט צפוי להימשך כ-6 עד 12 חודשים, תלוי בהיקף הבנייה ובלוח הזמנים הסופי.</p>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
     function Contact() {
       return (
-        <section className="py-12 px-4 max-w-5xl mx-auto">
+        <section className="py-12 px-4 max-w-5-Lg mx-auto">
           <h2 className="text-3xl font-semibold mb-6">צרו קשר</h2>
           <p className="text-lg mb-4">
             למידע נוסף על הפרויקט, לוחות זמנים, או לשאלות, אנא צרו קשר עם צוות הפרויקט:
@@ -145,6 +227,7 @@
           <ProjectOverview />
           <Benefits />
           <Costs />
+          <FAQ />
           <Contact />
           <Footer />
         </div>
