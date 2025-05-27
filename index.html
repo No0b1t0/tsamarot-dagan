@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>פרויקט הוספת מרפסות - צמרות דגן</title>
+  <style>
+    @font-face {
+      font-family: 'DejaVu Sans';
+      src: url('https://fonts.googleapis.com/css2?family=DejaVu+Sans&display=swap');
+    }
+    body {
+      font-family: 'DejaVu Sans', sans-serif;
+      background: linear-gradient(135deg, #1e3a8a 0%, #e5e7eb 100%);
+      background-attachment: fixed;
+    }
+    /* Tailwind CSS pre-built output */
+    .bg-gray-100 { background-color: #f3f4f6; }
+    .text-gray-800 { color: #1f2937; }
+    .bg-blue-600 { background-color: #2563eb; }
+    .text-white { color: #ffffff; }
+    .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+    .text-center { text-align: center; }
+    .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+    .font-bold { font-weight: 700; }
+    .mt-2 { margin-top: 0.5rem; }
+    .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+    .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    .max-w-5xl { max-width: 64rem; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+    .font-semibold { font-weight: 600; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .bg-white { background-color: #ffffff; }
+    .list-disc { list-style-type: disc; }
+    .list-inside { list-style-position: inside; }
+    .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
+    .bg-gray-800 { background-color: #1f2937; }
+    .mt-6 { margin-top: 1.5rem; }
+    .w-ful { width: 100%; }
+    .max-w-lg { max-width: 32rem; }
+    .rounded-lg { border-radius: 0.5rem; }
+    .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.25.6/babel.min.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    function Header() {
+      return (
+        <header className="bg-blue-600 text-white py-6 text-center">
+          <h1 className="text-4xl font-bold">פרויקט הוספת מרפסות - צמרות דגן</h1>
+          <p className="mt-2 text-lg">שדרגו את איכות החיים שלכם עם מרפסות חדשות ומרווחות</p>
+        </header>
+      );
+    }
+
+    function ProjectOverview() {
+      return (
+        <section className="py-12 px-4 max-w-5xl mx-auto">
+          <h2 className="text-3xl font-semibold mb-6">על הפרויקט</h2>
+          <p className="text-lg mb-4">
+            פרויקט הוספת והרחבת המרפסות במתחם צמרות דגן נועד לשפר את איכות החיים של הדיירים על ידי הוספת מרפסות מודרניות ומרווחות לכל דירה. הפרויקט מתוכנן בקפידה תוך הקפדה על תקני בנייה גבוהים, עיצוב אסתטי והתאמה לצרכי הדיירים.
+          </p>
+          <p className="text-lg mb-4">
+            אנו שמחים להציג בפניכם את התוכנית, הכוללת תוספת מרפסות בשטח של כ-12 מ"ר לכל דירה, עם אפשרויות עיצוב גמישות וחומרים איכותיים.
+          </p>
+          <img src="https://media.istockphoto.com/id/850823550/photo/white-balconies-in-modern-apartment-building.jpg?s=1024x1024&w=is&k=20&c=nWVWNpfO5q3I1FBfrJsxVsc1lAjdUoRN1_cZa0_Jcgc=" alt="מרפסות מודרניות" className="w-full max-w-lg mx-auto rounded-lg shadow-md mt-6" />
+        </section>
+      );
+    }
+
+    function Benefits() {
+      return (
+        <section className="bg-white py-12 px-4">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl font-semibold mb-6">יתרונות הפרויקט</h2>
+            <ul className="list-disc list-inside text-lg space-y-2">
+              <li>הגדלת שטח המגורים עם מרפסת פרטית לכל דירה</li>
+              <li>שיפור הנוף והאוורור הטבעי בבית</li>
+              <li>עליית ערך הנכס בשוק הנדל"ן</li>
+              <li>עיצוב מודרני המותאם לסגנון המתחם</li>
+              <li>תהליך בנייה מהיר עם מינימום הפרעה לדיירים</li>
+            </ul>
+            <img src="https://media.istockphoto.com/id/940884698/photo/new-apartment-building-with-a-modern-white-facade.jpg?s=1024x1024&w=is&k=20&c=rcAH42kP10hg3DubhB0onWJrEWIrLUrTSmMz-KqFSMg=" alt="חזית מודרנית" className="w-full max-w-lg mx-auto rounded-lg shadow-md mt-6" />
+          </div>
+        </section>
+      );
+    }
+
+    function Costs() {
+      return (
+        <section className="py-12 px-4 max-w-5xl mx-auto">
+          <h2 className="text-3xl font-semibold mb-6">עלויות הפרויקט</h2>
+          <p className="text-lg mb-4">
+            להלן הערכות ראשוניות לעלויות עבור הוספת המרפסות במתחם צמרות דגן:
+          </p>
+          <ul className="list-disc list-inside text-lg space-y-2">
+            <li>עלות בסיסית לדירה: כ-7,800 ש"ח (כולל תכנון ובנייה)</li>
+            <li>עלות משוערת נוספת עבור התאמות מיוחדות: כ-2,340 ש"ח</li>
+            <li>עלות משוערת עבור תוספות עיצוביות: כ-1,736 ש"ח</li>
+          </ul>
+          <p className="text-lg mt-4">
+            העלויות הסופיות עשויות להשתנות בהתאם לבחירות העיצוביות ולתנאי הפרויקט. לפרטים נוספים, אנא צרו קשר עם צוות הפרויקט.
+          </p>
+          <img src="https://media.istockphoto.com/id/879931070/photo/modern-apartment-buildings.jpg?s=1024x1024&w=is&k=20&c=ro1fh2hvJ4up97qHEpmZ4ic2SgeYOArw0NBdWJ65kXo=" alt="בנייני מגורים מודרניים" className="w-full max-w-lg mx-auto rounded-lg shadow-md mt-6" />
+        </section>
+      );
+    }
+
+    function Contact() {
+      return (
+        <section className="py-12 px-4 max-w-5xl mx-auto">
+          <h2 className="text-3xl font-semibold mb-6">צרו קשר</h2>
+          <p className="text-lg mb-4">
+            למידע נוסף על הפרויקט, לוחות זמנים, או לשאלות, אנא צרו קשר עם צוות הפרויקט:
+          </p>
+          <p className="text-lg">
+            <strong>דוא"ל:</strong> info@tsamarot-dagan.co.il<br />
+            <strong>טלפון:</strong> 03-123-4567<br />
+            <strong>כתובת:</strong> מתחם צמרות דגן, רחוב הדגן 123, תל אביב
+          </p>
+        </section>
+      );
+    }
+
+    function Footer() {
+      return (
+        <footer className="bg-gray-800 text-white py-6 text-center">
+          <p>© 2025 צמרות דגן - כל הזכויות שמורות</p>
+        </footer>
+      );
+    }
+
+    function App() {
+      return (
+        <div>
+          <Header />
+          <ProjectOverview />
+          <Benefits />
+          <Costs />
+          <Contact />
+          <Footer />
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
